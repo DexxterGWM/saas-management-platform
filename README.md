@@ -41,18 +41,15 @@ API --> Auth[Auth Module]
 API --> SaaS[SaaS Core Module]
 API --> Payments[Payments Module]
 
-%% DB Separation (logical, even if same instance)
 Auth --> AuthDB[(PostgreSQL - Auth)]
 SaaS --> SaaSDB[(PostgreSQL - Core)]
 Payments --> PayDB[(PostgreSQL - Payments)]
 
-%% Redis roles EXPLICIT
 API --> Cache[(Redis - Cache / Sessions)]
 API --> Queue[(Redis - BullMQ Queue)]
 
 Queue --> Worker["Worker (BullMQ Processor)"]
 
-%% Payments integration
 SaaS -->|send email / track events| External["External APIs (Email - SendGrid, CRM - HubSpot, Analytics - Segment)"]
 
 Payments --> Stripe[Stripe API]
