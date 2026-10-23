@@ -1,6 +1,6 @@
 # SaaS Management Platform
 
-SaaS Management Platform developed for managing organizations, users, and business operations in multi-tenant environments, providing access control, asynchronous processing, and integration with external services.
+SaaS Management Platform designed for managing organizations, users, workspaces, projects, and business operations in multi-tenant environments, with tenant-aware authorization, reliable asynchronous processing, subscription billing, and external service integrations.
 
 <br/>
 
