@@ -5,7 +5,7 @@ SaaS Management Platform developed for managing organizations, users, and busine
 <br/>
 
 > [!NOTE]
-> MVP is currently under development.
+> MVP is currently under development. This README describes the intended architecture and capabilities, not completed functionality.
 
 <br/><br/>
 
@@ -15,9 +15,9 @@ SaaS Management Platform developed for managing organizations, users, and busine
 
 ## Overview
 
-This Platform is a production-oriented full-stack application designed to demonstrate modern backend architecture, scalable application design, and enterprise development practices.
+This Platform is a production-oriented full-stack application designed to demonstrate modular backend architecture, relational domain integrity, secure multi-tenant operations, resilient payment synchronization, and operational engineering practices.
 
-It allows organizations to manage isolated workspaces, users, projects, subscriptions, and business operations while integrating authentication, background processing, payment workflows, and external services into a unified architecture.
+Organizations manage members, isolated workspaces, projects, subscriptions, and plan-based entitlements. Authenticated identities, tenant memberships, business-resource ownership, billing ownership, and purchasing actors are distinct concepts.
 
 <br/><br/>
 
@@ -27,7 +27,7 @@ It allows organizations to manage isolated workspaces, users, projects, subscrip
 
 ## Architecture
 
-The application follows a modular architecture where each domain encapsulates its own business logic while sharing common infrastructure and application services.
+The application follows a modular monolith architecture where each domain owns its business rules and persistence interfaces while sharing controlled infrastructure. The first deployment uses one PostgreSQL database with logical domain ownership, Redis for recomputable cache and expirable infrastructure data, and PostgreSQL-backed durable jobs.
 
 <br/>
 
@@ -125,6 +125,8 @@ PayDB -->> Payments: ok
 Payments -->> Stripe: 400 (invalid signature)
 ```
 
+Checkout completion, payment confirmation, subscription activation, and authorization to use paid features are separate lifecycle decisions. Stripe webhooks are signature-verified, durably recorded, reconciled, and processed idempotently.
+
 <br/><br/>
 
 
@@ -134,33 +136,40 @@ Payments -->> Stripe: 400 (invalid signature)
 ## Features
 
 ### Authentication:
-- JWT authentication
-- OAuth integration (Google and GitHub)
-- Refresh tokens
-- Session management
+- JWT-based access authentication
+- OAuth integration with Google and GitHub
+- Refresh-token rotation and reuse detection
+- Persistent session management and revocation
 
 ### Authorization:
 - Role-Based Access Control (RBAC)
-- Organization-level permissions
-- Workspace isolation
+- Organization memberships and organization-level permissions
+- Workspace-scoped access policies
+- Resource ownership and tenant isolation
+- Entitlement-aware authorization
 
 ### Business Logic:
-- Multi-tenant architecture
-- Subscription management
-- Payment workflows
-- External API integrations
+- Organization-based multi-tenant architecture
+- Users, memberships, workspaces, and projects
+- User-owned billing accounts and subscriptions
+- Stripe-hosted subscription checkout and billing reconciliation
+- Subscription plans, feature entitlements, and usage limits
+- Email, CRM, and analytics integrations
+- Auditable business and security operations
 
 ### Performance:
-- Cursor pagination
-- Optimized database queries
-- Redis caching
-- Background job processing
+- Deterministic cursor pagination
+- Tenant-scoped optimized database queries and indexing
+- Redis caching with explicit invalidation rules
+- Concurrency-safe quota and billing operations
+- Durable asynchronous job processing with retries and recovery
 
 ### Infrastructure:
-- Dockerized environment
-- CI/CD pipelines
-- Automated testing
+- Dockerized API, worker, and supporting infrastructure
+- GitHub Actions CI/CD pipelines
+- Automated unit, integration, security, and end-to-end testing
 - OpenAPI documentation
+- Health checks, structured logging, metrics, and tracing
 
 <br/><br/>
 
@@ -188,25 +197,6 @@ Payments -->> Stripe: 400 (invalid signature)
 | Deployment | Railway, Vercel |
 
 </div>
-
-<br/><br/>
-
-
-
----
-
-## Getting Started
-
-<br/>
-
-> [!NOTE]
-> Make sure to configure the `.env` file using the values provided in `.env.example`.
-
-### Prerequisites:
-- Node.js
-- Docker
-- PostgreSQL
-- Redis
 
 <br/><br/>
 
